@@ -1,150 +1,63 @@
 :root {
-    --primary-color: #28a745; /* Hijau yang lebih segar */
-    --secondary-color: #007bff; /* Biru standar */
-    --light-gray: #f8f9fa;
-    --dark-text: #212529;
-    --light-text: #6c757d;
-    --border-color: #dee2e6;
+    --primary-color: #28a745; --secondary-color: #007bff; --light-gray: #f8f9fa;
+    --dark-text: #212529; --light-text: #6c757d; --border-color: #dee2e6;
     --shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
-
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    margin: 0;
-    background-color: var(--light-gray);
-    color: var(--dark-text);
+    margin: 0; background-color: var(--light-gray); color: var(--dark-text);
 }
-
-.app-container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 1rem;
-}
-
-.page-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: var(--shadow);
-}
-
-/* Elemen Umum */
-h1, h2 {
-    text-align: center;
-    color: var(--dark-text);
-}
-
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; margin-top: 0; }
-
+.app-container { max-width: 800px; margin: 2rem auto; padding: 1rem; }
+.page-card { background: white; padding: 2rem; border-radius: 8px; box-shadow: var(--shadow); }
+h1, h2 { text-align: center; color: var(--dark-text); }
+h1 { font-size: 2.5rem; } h2 { font-size: 2rem; margin-top: 0; }
 .button, button {
-    display: inline-block;
-    background-color: var(--primary-color);
-    color: white;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-    text-decoration: none;
-    text-align: center;
+    display: inline-block; background-color: var(--primary-color); color: white;
+    padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer;
+    font-size: 16px; font-weight: 600; text-decoration: none; text-align: center;
     transition: all 0.2s ease-in-out;
 }
-
-.button:hover, button:hover {
-    background-color: #218838;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.button.secondary, button.secondary {
-    background-color: var(--secondary-color);
-}
-
-.button.secondary:hover, button.secondary:hover {
-    background-color: #0069d9;
-}
-
-.nav-link {
-    display: block;
-    text-align: center;
-    margin-top: 1.5rem;
-    color: var(--secondary-color);
-    text-decoration: none;
-    font-weight: 500;
-}
+.button:hover, button:hover { background-color: #218838; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+.button.secondary, button.secondary { background-color: var(--secondary-color); }
+.button.secondary:hover, button.secondary:hover { background-color: #0069d9; }
+.nav-link { display: block; text-align: center; margin-top: 1.5rem; color: var(--secondary-color); text-decoration: none; font-weight: 500; }
 .nav-link:hover { text-decoration: underline; }
-
-/* Halaman Home */
 .home-container { text-align: center; }
 .home-container p { font-size: 1.2rem; color: var(--light-text); }
 .home-buttons { margin-top: 2rem; }
 .home-buttons .button { margin: 0.5rem; min-width: 220px; font-size: 1.1rem; padding: 15px; }
-
-/* Halaman Form */
 .form-group { margin-bottom: 1.5rem; }
 .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
 .form-group input, .form-group textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    box-sizing: border-box;
-    font-size: 1rem;
+    width: 100%; padding: 12px; border: 1px solid var(--border-color);
+    border-radius: 5px; box-sizing: border-box; font-size: 1rem;
 }
-.form-group input:focus, .form-group textarea:focus {
-    border-color: var(--primary-color);
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
-}
+.form-group input:focus, .form-group textarea:focus { border-color: var(--primary-color); outline: none; box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25); }
 .form-group textarea { resize: vertical; min-height: 120px; }
 .char-counter { font-size: 0.85em; color: var(--light-text); text-align: right; margin-top: 4px; }
-
-/* Halaman Daftar */
 .sort-buttons { margin-bottom: 1.5rem; text-align: center; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); }
 .sort-buttons button { margin: 0 5px; }
 .title-list-item {
-    border: 1px solid var(--border-color);
-    padding: 1rem 1.5rem;
-    margin-bottom: 1rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    border: 1px solid var(--border-color); padding: 1rem 1.5rem; margin-bottom: 1rem;
+    border-radius: 5px; cursor: pointer; transition: all 0.2s ease-in-out;
     border-left: 4px solid transparent;
 }
-.title-list-item:hover {
-    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-    border-left: 4px solid var(--primary-color);
-}
+.title-list-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.07); border-left: 4px solid var(--primary-color); }
 .title-list-item h4 { margin: 0 0 0.5rem 0; font-size: 1.1rem; }
 .title-list-item p { margin: 0; font-size: 0.9em; color: var(--light-text); }
 .title-list-item span { font-weight: 700; color: #dc3545; }
-
-/* Halaman Preview */
 .preview-container h3 { color: var(--primary-color); font-size: 1.8rem; border-bottom: 2px solid var(--light-gray); padding-bottom: 1rem; margin-bottom: 1rem; }
 .preview-container .detail-section { background: var(--light-gray); padding: 1.5rem; margin-top: 1.5rem; border-radius: 5px; }
 .preview-container p { line-height: 1.6; margin: 0.5rem 0; }
 .preview-container strong { color: var(--dark-text); }
-
-/* Overlay Loading */
 #loading-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(255, 255, 255, 0.85);
-    z-index: 9999;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    backdrop-filter: blur(4px);
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.85); z-index: 9999; justify-content: center;
+    align-items: center; flex-direction: column; backdrop-filter: blur(4px);
 }
 .spinner {
-    border: 5px solid rgba(0, 0, 0, 0.1);
-    width: 50px; height: 50px;
-    border-radius: 50%;
-    border-left-color: var(--primary-color);
+    border: 5px solid rgba(0, 0, 0, 0.1); width: 50px; height: 50px;
+    border-radius: 50%; border-left-color: var(--primary-color);
     animation: spin 1s ease infinite;
 }
 #loading-text { margin-top: 1.5rem; font-size: 1.2rem; font-weight: 500; }
