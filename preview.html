@@ -1,78 +1,22 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Judul - LKTI Generator</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div id="loading-overlay">
-        <div class="spinner"></div>
-        <h3 id="loading-text">Memproses...</h3>
-    </div>
-
-    <div class="app-container">
-        <div class="page-card">
-            <h2>Detail Judul</h2>
-            <div id="preview-content">
-                <p style="text-align:center;">Memuat detail...</p>
-            </div>
-            <div style="text-align:center; margin-top:2rem;">
-                <a href="form.html" class="button">Buat Judul Lain</a>
-                <a href="index.html" class="button secondary">Halaman Utama</a>
-            </div>
-        </div>
-    </div>
-    
-    <script src="main.js"></script>
-    <script>
-        function renderPreview(data) {
-            const previewContainer = document.getElementById('preview-content');
-            if (!data || !data.form) {
-                previewContainer.innerHTML = '<p style="text-align:center;">Gagal memuat detail data. Silakan coba lagi.</p>';
-                return;
-            }
-            
-            previewContainer.innerHTML = `
-                <div class="preview-container">
-                    <h3>${data.judul}</h3>
-                    <p><strong>Skor Potensi Juara:</strong> ${data.skor}</p>
-                    <p><strong>Dibuat pada:</strong> ${data.waktu || new Date(data.timestamp).toLocaleString('id-ID')}</p>
-                    <div class="detail-section">
-                        <h4>Input Form yang Digunakan:</h4>
-                        <p><strong>Tema Lomba:</strong> ${data.form.tema}</p>
-                        <p><strong>Sub Tema:</strong> ${data.form.subTema}</p>
-                        <p><strong>Deskripsi Singkat:</strong> ${data.form.isi}</p>
-                    </div>
-                </div>
-            `;
-        }
-        
-        document.addEventListener('DOMContentLoaded', async () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const titleId = urlParams.get('id');
-            const previewDataFromSession = sessionStorage.getItem('previewData');
-            
-            if (previewDataFromSession) {
-                // Jika data datang dari form submit
-                const data = JSON.parse(previewDataFromSession);
-                renderPreview(data);
-                sessionStorage.removeItem('previewData'); // Hapus setelah ditampilkan
-            } else if (titleId) {
-                // Jika data datang dari klik di halaman daftar
-                toggleLoading(true, 'Memuat Detail...');
-                const result = await callApi('getTitleDetails', { id: titleId });
-                toggleLoading(false);
-                if (result.success) {
-                    renderPreview(result.data);
-                } else {
-                    document.getElementById('preview-content').innerHTML = '<p style="text-align:center;">Tidak dapat menemukan detail untuk judul ini.</p>';
-                }
-            } else {
-                document.getElementById('preview-content').innerHTML = '<p style="text-align:center;">Tidak ada data untuk ditampilkan.</p>';
-            }
-        });
-    </script>
-</body>
-</html>
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Detail Judul - LKTI Generator</title><style><?!= cssContent ?></style></head><body><div id="loading-overlay"><div class="spinner"></div><h3 id="loading-text">Memproses...</h3></div><div class="app-container"><div class="page-card"><h2>Detail Judul</h2><div id="preview-content"><p style="text-align:center;">Memuat detail...</p></div><div style="text-align:center; margin-top:2rem;"><a href="<?= ScriptApp.getService().getUrl() ?>?page=form" class="button">Buat Judul Lain</a><a href="<?= ScriptApp.getService().getUrl() ?>" class="button secondary">Halaman Utama</a></div></div></div><script><?!= jsContent ?></script><script>
+function renderPreview(data) {
+    const previewContainer = document.getElementById('preview-content');
+    if (!data || !data.form) { previewContainer.innerHTML = '<p>Gagal memuat detail.</p>'; return; }
+    previewContainer.innerHTML = `<div class="preview-container"><h3>${data.judul}</h3><p><strong>Skor Potensi Juara:</strong> ${data.skor}</p><p><strong>Dibuat pada:</strong> ${data.waktu || new Date(data.timestamp).toLocaleString('id-ID')}</p><div class="detail-section"><h4>Input Form yang Digunakan:</h4><p><strong>Tema Lomba:</strong> ${data.form.tema}</p><p><strong>Sub Tema:</strong> ${data.form.subTema}</p><p><strong>Deskripsi Singkat:</strong> ${data.form.isi}</p></div></div>`;
+}
+document.addEventListener('DOMContentLoaded', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const titleId = urlParams.get('id');
+    const previewDataFromSession = sessionStorage.getItem('previewData');
+    if (previewDataFromSession) {
+        renderPreview(JSON.parse(previewDataFromSession));
+        sessionStorage.removeItem('previewData');
+    } else if (titleId) {
+        toggleLoading(true, 'Memuat Detail...');
+        google.script.run.withSuccessHandler(response => {
+            toggleLoading(false);
+            if (response.success) { renderPreview(response.data); } else { onFailure(response); }
+        }).withFailureHandler(onFailure).getTitleDetailsById(titleId);
+    } else { document.getElementById('preview-content').innerHTML = '<p>Tidak ada data untuk ditampilkan.</p>'; }
+});
+</script></body></html>
