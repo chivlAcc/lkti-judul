@@ -1,7 +1,7 @@
 // =================================================================
 // KONFIGURASI WAJIB
 // GANTI URL DI BAWAH INI DENGAN URL WEB APP DARI GOOGLE APPS SCRIPT ANDA
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyo2opVhHHnZQOLQyhplZvLYi_iEDH6whH_Zk6aqwj-_XRkU1vorPBWIPie2BtfpQw6mQ/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyIwbymxM9wj6xjznM9eZkzkMZBao9WfMBj86VVTOCH0-oUcJrM6Pe3Uy8MDjJpNN-UIA/exec";
 // =================================================================
 
 
