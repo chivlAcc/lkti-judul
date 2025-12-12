@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Judul LKTI Generator</title>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #008CBA;
+            --light-gray: #f4f4f9;
+            --dark-text: #333;
+            --light-text: #666;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; margin: 0; background-color: var(--light-gray); color: var(--dark-text); }
+        .app-container { max-width: 800px; margin: 20px auto; padding: 20px; }
+        .page { display: none; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .page.active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        /* General Elements */
+        h1, h2 { text-align: center; color: var(--dark-text); }
+        button, .button { display: inline-block; background-color: var(--primary-color); color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; text-decoration: none; text-align: center; transition: background-color 0.3s; }
+        button:hover, .button:hover { background-color: #45a049; }
+        button.secondary { background-color: var(--secondary-color); }
+        button.secondary:hover { background-color: #007ba7; }
+        a.nav-link { display: block; text-align: center; margin-top: 20px; color: var(--secondary-color); text-decoration: none; }
+        a.nav-link:hover { text-decoration: underline; }
+
+        /* Home Page */
+        .home-buttons { text-align: center; margin-top: 30px; }
+        .home-buttons button { margin: 10px; min-width: 200px; font-size: 18px; }
+        
+        /* Form Page */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #555; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
+        .form-group textarea { resize: vertical; min-height: 120px; }
+        .char-counter { font-size: 0.85em; color: var(--light-text); text-align: right; margin-top: 4px; }
+        
+        /* Daftar Page */
+        .sort-buttons { margin-bottom: 20px; text-align: center; }
+        .title-list-item { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px; cursor: pointer; transition: box-shadow 0.2s; }
+        .title-list-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 4px solid var(--primary-color); padding-left: 11px; }
+        .title-list-item h4 { margin: 0 0 5px 0; }
+        .title-list-item p { margin: 0; font-size: 0.9em; color: var(--light-text); }
+        .title-list-item span { font-weight: bold; color: #e74c3c; }
+        
+        /* Preview Page */
+        .preview-container h3 { color: var(--primary-color); font-size: 1.6em; }
+        .preview-container .detail-section { background: var(--light-gray); padding: 15px; margin-top: 20px; border-radius: 5px; }
+        .preview-container p { line-height: 1.6; }
+        
+        /* Loading Overlay */
+        #loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.8); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
+        .spinner { border: 4px solid rgba(0, 0, 0, 0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: var(--primary-color); animation: spin 1s ease infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <h3 id="loading-text">Memproses...</h3>
+    </div>
+
+    <div class="app-container">
+        <!-- Halaman Home -->
+        <div id="home-page" class="page">
+            <h1>Judul LKTI Generator</h1>
+            <p style="text-align:center;">Buat judul karya tulis ilmiah yang inovatif dengan bantuan AI.</p>
+            <div class="home-buttons">
+                <button onclick="showPage('form-page')">Buat Judul Baru</button>
+                <button class="secondary" onclick="showPage('daftar-page')">Lihat Daftar Judul</button>
+            </div>
+        </div>
+
+        <!-- Halaman Form -->
+        <div id="form-page" class="page">
+            <h2>Form Pembuatan Judul</h2>
+            <form id="lkti-form">
+                <div class="form-group">
+                    <label for="tema">Tema Lomba (Maks. 30 kata)</label>
+                    <input type="text" id="tema" name="tema" required>
+                    <div id="tema-counter" class="char-counter">0/30 kata</div>
+                </div>
+                <div class="form-group">
+                    <label for="subTema">Sub Tema (Maks. 10 kata)</label>
+                    <input type="text" id="subTema" name="subTema" required>
+                    <div id="subTema-counter" class="char-counter">0/10 kata</div>
+                </div>
+                <div class="form-group">
+                    <label for="isi">Deskripsi Singkat (Masalah, Tujuan, Solusi) (Maks. 50 kata)</label>
+                    <textarea id="isi" name="isi" required></textarea>
+                    <div id="isi-counter" class="char-counter">0/50 kata</div>
+                </div>
+                <button type="submit" id="submit-btn" style="width:100%;">Generate Judul</button>
+            </form>
+            <a href="#" onclick="showPage('home-page')" class="nav-link">Kembali ke Halaman Utama</a>
+        </div>
+
+        <!-- Halaman Daftar Judul -->
+        <div id="daftar-page" class="page">
+            <h2>Daftar Judul Tersimpan</h2>
+            <div class="sort-buttons">
+                <button class="secondary" onclick="renderList('time')">Urutkan per Waktu</button>
+                <button class="secondary" onclick="renderList('alpha')">Urutkan A-Z</button>
+                <button class="secondary" onclick="renderList('score')">Urutkan per Skor</button>
+            </div>
+            <div id="title-list"></div>
+            <a href="#" onclick="showPage('home-page')" class="nav-link">Kembali ke Halaman Utama</a>
+        </div>
+
+        <!-- Halaman Preview -->
+        <div id="preview-page" class="page">
+            <h2>Detail Judul</h2>
+            <div id="preview-content"></div>
+            <div style="text-align:center; margin-top:20px;">
+                <button onclick="showPage('form-page')">Kembali ke Form</button>
+                <a href="#" onclick="showPage('home-page')" class="button secondary">Halaman Utama</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- KONFIGURASI PENTING ---
+        // GANTI DENGAN URL WEB APP DARI GOOGLE APPS SCRIPT YANG TELAH ANDA DEPLOY
+        const SCRIPT_URL = "GANTI_DENGAN_URL_WEB_APP_ANDA";
+        
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingText = document.getElementById('loading-text');
+        let allTitlesData = [];
+
+        // Fungsi utama untuk navigasi halaman
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
+
+            if (pageId === 'daftar-page') {
+                loadDaftarJudul();
+            }
+        }
+        
+        // Fungsi untuk menampilkan/menyembunyikan loading
+        function toggleLoading(show, text = 'Memproses...') {
+            loadingText.textContent = text;
+            loadingOverlay.style.display = show ? 'flex' : 'none';
+        }
+
+        // Fungsi untuk berkomunikasi dengan API backend
+        async function callApi(action, payload = {}) {
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, // Diperlukan untuk Apps Script doPost
+                    body: JSON.stringify({ action, payload })
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('API Call Error:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // --- Logika Halaman Form ---
+        const lktiForm = document.getElementById('lkti-form');
+        const formInputs = lktiForm.querySelectorAll('input, textarea');
+        
+        function updateWordCount(field, counterElement, maxWords) {
+            const text = field.value.trim();
+            const words = text === '' ? 0 : text.split(/\s+/).length;
+            counterElement.textContent = `${words}/${maxWords} kata`;
+            counterElement.style.color = words > maxWords ? 'red' : 'inherit';
+        }
+        
+        ['tema', 'subTema', 'isi'].forEach(name => {
+            const input = document.getElementById(name);
+            input.value = sessionStorage.getItem(name) || '';
+            input.addEventListener('input', () => sessionStorage.setItem(name, input.value));
+            
+            const counter = document.getElementById(`${name}-counter`);
+            const max = {tema: 30, subTema: 10, isi: 50}[name];
+            input.addEventListener('input', () => updateWordCount(input, counter, max));
+            updateWordCount(input, counter, max); // Panggil saat load
+        });
+
+        lktiForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            toggleLoading(true, 'Membuat Judul...');
+            const formData = {
+                tema: document.getElementById('tema').value,
+                subTema: document.getElementById('subTema').value,
+                isi: document.getElementById('isi').value
+            };
+            
+            const result = await callApi('generateTitle', formData);
+            toggleLoading(false);
+
+            if (result.success) {
+                renderPreview(result.data);
+                showPage('preview-page');
+            } else {
+                const errorMessage = result.error === "API_LIMIT_REACHED"
+                    ? 'Limit penggunaan AI telah tercapai. Coba lagi nanti.'
+                    : 'Terjadi kesalahan: ' + result.error;
+                alert(errorMessage);
+            }
+        });
+
+        // --- Logika Halaman Daftar ---
+        async function loadDaftarJudul() {
+            const listContainer = document.getElementById('title-list');
+            listContainer.innerHTML = '<p>Memuat data...</p>';
+            const result = await callApi('getAllTitles');
+            if (result.success && result.data) {
+                allTitlesData = result.data;
+                renderList();
+            } else {
+                listContainer.innerHTML = '<p>Gagal memuat data atau belum ada judul yang dibuat.</p>';
+            }
+        }
+        
+        function renderList(sortBy = 'time') {
+            const listContainer = document.getElementById('title-list');
+            listContainer.innerHTML = '';
+
+            let sortedList = [...allTitlesData];
+            if (sortBy === 'alpha') {
+                sortedList.sort((a, b) => a.judul.localeCompare(b.judul));
+            } else if (sortBy === 'score') {
+                sortedList.sort((a, b) => b.skor - a.skor);
+            } // Default 'time' sudah diurutkan dari backend
+
+            if(sortedList.length === 0){
+                listContainer.innerHTML = '<p style="text-align:center;">Belum ada judul yang dibuat.</p>';
+                return;
+            }
+
+            sortedList.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'title-list-item';
+                div.onclick = () => viewDetails(item.id);
+                div.innerHTML = `
+                    <h4>${item.judul}</h4>
+                    <p>Skor: <span>${item.skor}</span> | Dibuat pada: ${new Date(item.timestamp).toLocaleString('id-ID')}</p>
+                `;
+                listContainer.appendChild(div);
+            });
+        }
+
+        async function viewDetails(id) {
+            toggleLoading(true, 'Memuat Detail...');
+            const result = await callApi('getTitleDetails', { id });
+            toggleLoading(false);
+
+            if (result.success) {
+                renderPreview(result.data);
+                showPage('preview-page');
+            } else {
+                alert('Gagal memuat detail judul.');
+            }
+        }
+
+        // --- Logika Halaman Preview ---
+        function renderPreview(data) {
+            const previewContainer = document.getElementById('preview-content');
+            previewContainer.innerHTML = `
+                <div class="preview-container">
+                    <h3>${data.judul}</h3>
+                    <p><strong>Skor Potensi Juara:</strong> ${data.skor}</p>
+                    <p><strong>Dibuat pada:</strong> ${data.waktu || data.timestamp}</p>
+                    <div class="detail-section">
+                        <h4>Input Form yang Digunakan:</h4>
+                        <p><strong>Tema Lomba:</strong> ${data.form.tema}</p>
+                        <p><strong>Sub Tema:</strong> ${data.form.subTema}</p>
+                        <p><strong>Deskripsi Singkat:</strong> ${data.form.isi}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Inisialisasi Aplikasi
+        document.addEventListener('DOMContentLoaded', () => {
+            showPage('home-page');
+        });
+    </script>
+</body>
+</html>
