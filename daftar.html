@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Judul - LKTI Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <h3 id="loading-text">Memproses...</h3>
+    </div>
+
+    <div class="app-container">
+        <div class="page-card">
+            <h2>Daftar Judul Tersimpan</h2>
+            <div class="sort-buttons">
+                <button class="secondary" onclick="renderList('time')">Urutkan per Waktu</button>
+                <button class="secondary" onclick="renderList('alpha')">Urutkan A-Z</button>
+                <button class="secondary" onclick="renderList('score')">Urutkan per Skor</button>
+            </div>
+            <div id="title-list">
+                <p style="text-align:center;">Memuat data...</p>
+            </div>
+            <a href="index.html" class="nav-link">Kembali ke Halaman Utama</a>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+    <script>
+        let allTitlesData = [];
+
+        function renderList(sortBy = 'time') {
+            const listContainer = document.getElementById('title-list');
+            listContainer.innerHTML = '';
+
+            let sortedList = [...allTitlesData];
+            if (sortBy === 'alpha') {
+                sortedList.sort((a, b) => a.judul.localeCompare(b.judul));
+            } else if (sortBy === 'score') {
+                sortedList.sort((a, b) => b.skor - a.skor);
+            } // Default 'time' sudah diurutkan dari backend
+
+            if (sortedList.length === 0) {
+                listContainer.innerHTML = '<p style="text-align:center;">Belum ada judul yang dibuat.</p>';
+                return;
+            }
+
+            sortedList.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'title-list-item';
+                div.onclick = () => window.location.href = `preview.html?id=${item.id}`;
+                div.innerHTML = `
+                    <h4>${item.judul}</h4>
+                    <p>Skor: <span>${item.skor}</span> | Dibuat pada: ${new Date(item.timestamp).toLocaleString('id-ID')}</p>
+                `;
+                listContainer.appendChild(div);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            toggleLoading(true, 'Memuat Daftar Judul...');
+            const result = await callApi('getAllTitles');
+            toggleLoading(false);
+            
+            if (result.success && result.data) {
+                allTitlesData = result.data;
+                renderList();
+            } else {
+                document.getElementById('title-list').innerHTML = '<p style="text-align:center;">Gagal memuat data atau belum ada judul yang dibuat.</p>';
+            }
+        });
+    </script>
+</body>
+</html>
