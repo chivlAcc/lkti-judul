@@ -1,96 +1,39 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buat Judul Baru - LKTI Generator</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div id="loading-overlay">
-        <div class="spinner"></div>
-        <h3 id="loading-text">Memproses...</h3>
-    </div>
-
-    <div class="app-container">
-        <div class="page-card">
-            <h2>Form Pembuatan Judul</h2>
-            <form id="lkti-form">
-                <div class="form-group">
-                    <label for="tema">Tema Lomba (Maks. 30 kata)</label>
-                    <input type="text" id="tema" name="tema" required>
-                    <div id="tema-counter" class="char-counter">0/30 kata</div>
-                </div>
-                <div class="form-group">
-                    <label for="subTema">Sub Tema (Maks. 10 kata)</label>
-                    <input type="text" id="subTema" name="subTema" required>
-                    <div id="subTema-counter" class="char-counter">0/10 kata</div>
-                </div>
-                <div class="form-group">
-                    <label for="isi">Deskripsi Singkat (Masalah, Tujuan, Solusi) (Maks. 50 kata)</label>
-                    <textarea id="isi" name="isi" required></textarea>
-                    <div id="isi-counter" class="char-counter">0/50 kata</div>
-                </div>
-                <button type="submit" id="submit-btn" style="width:100%;">Generate Judul</button>
-            </form>
-            <a href="index.html" class="nav-link">Kembali ke Halaman Utama</a>
-        </div>
-    </div>
-
-    <script src="main.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const lktiForm = document.getElementById('lkti-form');
-
-            // Fungsi untuk update word count
-            function updateWordCount(field, counterElement, maxWords) {
-                const text = field.value.trim();
-                const words = text === '' ? 0 : text.split(/\s+/).length;
-                counterElement.textContent = `${words}/${maxWords} kata`;
-                counterElement.style.color = words > maxWords ? '#dc3545' : 'inherit';
+<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Buat Judul Baru - LKTI Generator</title><style><?!= cssContent ?></style></head><body><div id="loading-overlay"><div class="spinner"></div><h3 id="loading-text">Memproses...</h3></div><div class="app-container"><div class="page-card"><h2>Form Pembuatan Judul</h2><form id="lkti-form"><div class="form-group"><label for="tema">Tema Lomba (Maks. 30 kata)</label><input type="text" id="tema" name="tema" required><div id="tema-counter" class="char-counter">0/30 kata</div></div><div class="form-group"><label for="subTema">Sub Tema (Maks. 10 kata)</label><input type="text" id="subTema" name="subTema" required><div id="subTema-counter" class="char-counter">0/10 kata</div></div><div class="form-group"><label for="isi">Deskripsi Singkat (Maks. 50 kata)</label><textarea id="isi" name="isi" required></textarea><div id="isi-counter" class="char-counter">0/50 kata</div></div><button type="submit" id="submit-btn" style="width:100%;">Generate Judul</button></form><a href="<?= ScriptApp.getService().getUrl() ?>" class="nav-link">Kembali ke Halaman Utama</a></div></div><script><?!= jsContent ?></script><script>
+document.addEventListener('DOMContentLoaded', () => {
+    const lktiForm = document.getElementById('lkti-form');
+    function updateWordCount(field, counterElement, maxWords) {
+        const text = field.value.trim();
+        const words = text === '' ? 0 : text.split(/\s+/).length;
+        counterElement.textContent = `${words}/${maxWords} kata`;
+        counterElement.style.color = words > maxWords ? '#dc3545' : 'inherit';
+    }
+    ['tema', 'subTema', 'isi'].forEach(name => {
+        const input = document.getElementById(name);
+        input.value = sessionStorage.getItem(name) || '';
+        input.addEventListener('input', () => sessionStorage.setItem(name, input.value));
+        const counter = document.getElementById(`${name}-counter`);
+        const max = {tema: 30, subTema: 10, isi: 50}[name];
+        input.addEventListener('input', () => updateWordCount(input, counter, max));
+        updateWordCount(input, counter, max);
+    });
+    lktiForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        toggleLoading(true, 'Membuat Judul...');
+        const formData = {
+            tema: document.getElementById('tema').value,
+            subTema: document.getElementById('subTema').value,
+            isi: document.getElementById('isi').value
+        };
+        google.script.run.withSuccessHandler(response => {
+            toggleLoading(false);
+            if (response.success) {
+                sessionStorage.setItem('previewData', JSON.stringify(response.data));
+                ['tema', 'subTema', 'isi'].forEach(name => sessionStorage.removeItem(name));
+                window.location.href = '<?= ScriptApp.getService().getUrl() ?>?page=preview';
+            } else {
+                onFailure(response);
             }
-
-            // Inisialisasi form dari sessionStorage
-            ['tema', 'subTema', 'isi'].forEach(name => {
-                const input = document.getElementById(name);
-                input.value = sessionStorage.getItem(name) || '';
-                input.addEventListener('input', () => sessionStorage.setItem(name, input.value));
-
-                const counter = document.getElementById(`${name}-counter`);
-                const max = {tema: 30, subTema: 10, isi: 50}[name];
-                input.addEventListener('input', () => updateWordCount(input, counter, max));
-                updateWordCount(input, counter, max);
-            });
-
-            // Handle submit form
-            lktiForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                toggleLoading(true, 'Membuat Judul...');
-                
-                const formData = {
-                    tema: document.getElementById('tema').value,
-                    subTema: document.getElementById('subTema').value,
-                    isi: document.getElementById('isi').value
-                };
-
-                const result = await callApi('generateTitle', formData);
-                toggleLoading(false);
-
-                if (result.success) {
-                    // Simpan hasil ke sessionStorage untuk halaman preview
-                    sessionStorage.setItem('previewData', JSON.stringify(result.data));
-                    // Hapus data form agar form bersih saat kembali
-                    ['tema', 'subTema', 'isi'].forEach(name => sessionStorage.removeItem(name));
-                    // Pindah ke halaman preview
-                    window.location.href = 'preview.html';
-                } else {
-                    const errorMessage = result.error === "API_LIMIT_REACHED"
-                        ? 'Limit penggunaan AI telah tercapai untuk saat ini. Silakan coba lagi nanti.'
-                        : 'Terjadi kesalahan saat membuat judul: ' + result.error;
-                    alert(errorMessage);
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+        }).withFailureHandler(onFailure).prosesForm(formData);
+    });
+});
+</script></body></html>
